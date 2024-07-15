@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encriptador de texto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            height: 100vh;
+        }
+
+        .section {
+            height: 80%;
+        }
+
+        .btn {
+            padding: 10px;
+            border-radius: 16px;
+        }
+
+        #textInput:focus {
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                height: 50%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .btn {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="container-fluid d-flex flex-column flex-md-row flex-md-wrap w-100 justify-content-center align-items-center p-3"
+    style="background-color: #F3F5FC;">
+    <main class="col-12 col-md-8 d-flex flex-column gap-2 section p-4 justify-content-center align-items-center">
+        <div class="w-100 p-4 flex-grow-1">
+            <textarea id="textInput" style="font-size: 24px; resize: none; background-color: #F3F5FC;"
+            class="col-12 w-100 h-100 border-0" type="text" placeholder="Ingresa el texto aquí"></textarea>
+        </div>
+        <div class="d-flex flex-column flex-sm-row gap-2 flex-wrap px-4 w-80%">
+            <span class="col-12">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-info-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                    <path
+                        d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                </svg>
+                Solo letras minúsculas y sin acentos
+            </span>
+            <div class="w-100 d-flex justify-content-center gap-2">
+                <button id="btnEncrypt" class="col-6 btn text-white" style="background-color: #0A3871;">Encriptar</button>
+                <button id="btnDecrypt" class="col-6 btn" style="background-color: #D8DFE8; border: 1px solid #0A3871; color: #0A3871;">Desencriptar</button>
+            </div>
+        </div>
+    </main>
+    <aside id="asideResult" class="d-none col-md-4 d-flex flex-column align-items-center section p-4 shadow rounded-4"
+        style="height: 80%; background-color: #FFFF;">
+        <p id="textResult" class="flex-grow-1 w-100"></p>
+        <button id="btnCopy" class="btn btn-light" style="width: 50%; border: 1px solid #0A3871; color: #0A3871;">Copiar</button>
+    </aside>
+    <aside id="noResult"
+        class="col-md-4 d-flex flex-column align-items-center section justify-content-center p-4 text-center shadow rounded-4"
+        style="height: 80%; background-color: #FFFF;">
+        <h1>Ningún mensaje fue encontrado</h1>
+        <p>Ingresa el texto que desees encriptar o desencriptar.</p>
+    </aside>
+    <footer class="col-12 d-flex align-items-center">
+        <h1 class="col-4 text-center" style="font-size: 16px;">César José Uriarte Chavesta</h1>
+        <h1 class="col-4 text-center" style="font-size: 16px;">Github: <a
+                href="https://github.com/cesarujos">CesarUjos</a></h1>
+        <h1 class="col-4 text-center" style="font-size: 16px;"> 2024</h1>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+    <script>
+        function toggleShow() {
+            const textResult = document.querySelector('#textResult');
+            if (textResult.textContent !== '') {
+                document.querySelector('#noResult').classList.add('d-none');
+                document.querySelector('#asideResult').classList.remove('d-none');
+            } else {
+                document.querySelector('#noResult').classList.remove('d-none');
+                document.querySelector('#asideResult').classList.add('d-none');
+            }
+        }
+
+        const btnEncrypt = document.querySelector('#btnEncrypt');
+        const btnDecrypt = document.querySelector('#btnDecrypt');
+        btnEncrypt.addEventListener('click', () => {
+            const text = document.querySelector('#textInput').value;
+            document.querySelector('#textResult').textContent = encrypt(text);
+            toggleShow();
+        });
+        btnDecrypt.addEventListener('click', () => {
+            const text = document.querySelector('#textInput').value;
+            document.querySelector('#textResult').textContent = decrypt(text);
+            toggleShow();
+        });
+
+        function decrypt(text) {
+            text = text.toLowerCase();
+            text = text.replace(/enter/g, "e");
+            text = text.replace(/imes/g, "i");
+            text = text.replace(/ai/g, "a");
+            text = text.replace(/ober/g, "o");
+            text = text.replace(/ufat/g, "u");
+            return text
+        }
+
+        function encrypt(text) {
+            text = text.toLowerCase();
+            text = text.replace(/a/g, 'ai');
+            text = text.replace(/e/g, 'enter');
+            text = text.replace(/i/g, 'imes');
+            text = text.replace(/o/g, 'ober');
+            text = text.replace(/u/g, 'ufat');
+            return text
+        }
+
+        const btnCopy = document.querySelector('#btnCopy');
+        btnCopy.addEventListener('click', () => {
+            const textResult = document.querySelector('#textResult');
+            navigator.clipboard.writeText(textResult.textContent);
+        });
+
+    </script>
+</body>
+
+</html>
